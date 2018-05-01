@@ -1,11 +1,12 @@
+# SMALL TEMPLATE PARSER
 
 Small Javascript library that parse a string containing multiple small HTML templates an extract the needed one.
 
 It allows you to manage many small templates in one file instead of having many template files a few lines of code each
 
-##EXAMPLES
+# EXAMPLES
 
-### template.html
+## template.html
 ```` html
 [first]
 <h1>First</h1>
@@ -24,10 +25,8 @@ It allows you to manage many small templates in one file instead of having many 
 <span>extra</span>
 ````
 
-### index.js
-
-
-###### Extract single template
+## index.js
+#### Extract single template
 ```` javascript
 import {TemplateLoader} from '../src/TemplateLoader'
 let template_file = 'my template file as string'
@@ -41,7 +40,7 @@ Now mytemplate varible contains a string:
 ````
 
 
-###### Extract all the templates at once
+#### Extract all the templates at once
 ```javascript
 import {TemplateLoader} from '../src/TemplateLoader'
 let template_file = 'my template file as string'
