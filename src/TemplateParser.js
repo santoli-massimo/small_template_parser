@@ -5,18 +5,18 @@ export var TemplateParser = {
             // PATTERN:
             // (?:(?:aaa(.*?)(?=xxx)xxx))|(?:(?:aaa(.*)(?!xxx)))
             // (?:(?:^\s*\[aaa\]\s*$(.*?)(?=^\s*\[.*\]\s*$)^\s*\[.*\]\s*$))|(?:(?:^\s*\[aaa\]\s*$(.*)(?!^\s*\[.*\]\s*$)))
-            
             if(template_name){
                 // Create Regex
                 let open = `^\\s*\\[${template_name}\\]\\s*$`
                 let close = `^\\s*\\[.*?\\]\\s*$`
-                let reg = new RegExp(`
-                    (?:(?:${open}([\\s\\S]*?)(?=${close})${close}))
-                    |
-                    (?:(?:${open}([\\s\\S]*)(?!${close})))`
+                let reg = new RegExp(`(?:(?:${open}([\\s\\S]*?)(?=${close})${close}))|(?:(?:${open}([\\s\\S]*)(?!${close})))`
                 , 'gimu')
+
+                // let open = `^\\s*\\[${template_name}\\]\\s*$`
+                // let close = `^\\s*\\[.*?\\]\\s*$`  
+                // let reg = new RegExp(`(?:(?:${open}(.*?)(?=${close})${close}))|(?:(?:${open}(.*)(?!${close})))`, 'gimus')    
                 
-                let single = reg.exec(source)
+                let single = reg.exec(source) //?
                 return single ? (single[1] || single[2]) : ''
             }
             else {

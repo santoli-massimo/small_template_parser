@@ -1,48 +1,68 @@
 import {TemplateParser} from '../src/TemplateParser'
 
 var template = `
-    [first]
-    <h1>First</h1>
 
-    [second]
-    <div>Second</div>
+[first]
+<h1>First</h1>
 
-    [third]
+[second]
+<div>Second</div>
 
-    <div><p>Third</p></div>
+[third]
 
-    <span>extra</span>
+<div><p>Third</p></div>
 
-    [another]
-    <div><p>Third [myname]</p></div>
-    <span>extra</span>
-    [last]
+<span>extra</span>
 
-    <input type="text">
+[another]
+<div><p>Third [anything]</p></div>
+<span>extra</span>
+[last]
+
+<input type="text">
 
 `
 
-describe('Parser test', () => {
+describe('START TAG recognition Tests', () => {
+    it('should not return empty string if there is a template tag matching [template_name]', () => {
+        let res = TemplateParser.load(template, 'first') 
+        expect(res).not.toBe('')
+    });
+    it('should return empty string when there is no [template_name] match', () => {
+        let res = TemplateParser.load('template', 'first') 
+        expect(res).toMatch('')
+    });    
+})
+
+describe('END TAG recognition Tests', () => {
     it('should not return more than one template', () => {
         let res = TemplateParser.load(template, 'first') 
         expect(res).not.toMatch(/second/gmi)
     });
-    it('last template shoud be parsed correctly', () => {
+    it('EOF should be recognized as closing tag', () => {
         let res = TemplateParser.load(template, 'last') 
         expect(res.trim()).toBe('<input type="text">')
     });
-});
+})
 
-describe('General Test', () => {
-    it('should return empty string when there is no [template_name] match', () => {
-        let res = TemplateParser.load('template', 'first') 
-        expect(res).toMatch('')
-    });
+describe('Whole Template recognition test', () => {
     it('should return the correct template', () => {
-        let res = TemplateParser.load(template, 'first') 
+        let res = TemplateParser.load(template, 'first')
         expect(res.trim()).toBe('<h1>First</h1>')
     });
-});
+})
+describe('Pattern similar to [tamplate_name] inside a template', () => {
+    it('should not recognize [anything] as endtag when parsing [template_name]', () => {
+        let res = TemplateParser.load(template, 'another') 
+        expect(res.replace(/\r?\n?/g, ''))
+        .toBe('<div><p>Third [anything]</p></div><span>extra</span>')
+    });
+    it('should not match [anything] as template tag if is inside a template', () => {
+        let res = TemplateParser.load(template, '[anything]') 
+        expect(res.trim()).toBe('') 
+    });  
+})
+
 
 describe('Object test [ load() called without "template_name" property', () => {
     it('should return an object', () => {
@@ -53,6 +73,10 @@ describe('Object test [ load() called without "template_name" property', () => {
         let res = TemplateParser.load(template)
         expect(res).toHaveProperty('first','second','third','another','last')
     });
+    it('should ignore [anything] if is inside a template (with other char before or after) ', () => {
+        let res = TemplateParser.load(template) 
+        expect(res).not.toHaveProperty('anything') 
+    }); 
     it('should return empty object if there aren\'t any [template_name] key', () => {
         let res = TemplateParser.load('template') 
         expect(res).toEqual({})
